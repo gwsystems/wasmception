@@ -5,7 +5,6 @@ ROOT_DIR=${CURDIR}
 LLVM_REV=333081
 CLANG_REV=333081
 LLD_REV=333081
-MUSL_SHA=d312ecae6dd3c
 COMPILER_RT_REV=333082
 LIBCXX_REV=333082
 LIBCXXABI_REV=333082
@@ -33,11 +32,10 @@ endif
 
 src/musl.CLONED:
 	mkdir -p src/
-	cd src/; git clone https://github.com/jfbastien/musl.git
+	cd src/; git clone https://github.com/Others/musl.git
 ifdef MUSL_SHA
 	cd src/musl; git checkout $(MUSL_SHA)
 endif
-	cd src/musl; patch -p 1 < $(ROOT_DIR)/patches/musl.1.patch
 	touch src/musl.CLONED
 
 src/compiler-rt.CLONED:
@@ -54,6 +52,7 @@ src/libcxx.CLONED:
 ifdef LIBCXX_REV
 	cd src/libcxx; svn up -r$(LIBCXX_REV)
 endif
+	cd src/libcxx; patch -p 1 < $(ROOT_DIR)/patches/libcxx.patch
 	touch src/libcxx.CLONED
 
 src/libcxxabi.CLONED:
@@ -83,14 +82,7 @@ build/llvm.BUILT: src/llvm.CLONED
 
 build/musl.BUILT: src/musl.CLONED build/llvm.BUILT
 	mkdir -p build/musl
-	cd build/musl; $(ROOT_DIR)/src/musl/configure \
-		CC=$(ROOT_DIR)/dist/bin/clang \
-		CFLAGS="--target=wasm32-unknown-unknown-wasm -O3" \
-		--prefix=$(ROOT_DIR)/sysroot \
-		--enable-debug \
-		wasm32
-	make -C build/musl -j 8 install CROSS_COMPILE=$(ROOT_DIR)/dist/bin/llvm-
-	cp src/musl/arch/wasm32/libc.imports sysroot/lib/
+	make -C src/musl install prefix=$(ROOT_DIR)/sysroot CC="$(ROOT_DIR)/dist/bin/clang --target=wasm32-unknown-unknown-wasm" CROSS_COMPILE=$(ROOT_DIR)/dist/bin/llvm-
 	touch build/musl.BUILT
 
 build/compiler-rt.BUILT: src/compiler-rt.CLONED build/llvm.BUILT

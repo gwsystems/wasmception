@@ -1,0 +1,29 @@
+diff -ur a/CMakeLists.txt b/CMakeLists.txt
+--- a/CMakeLists.txt	2018-07-18 10:37:35.000000000 -0400
++++ b/CMakeLists.txt	2018-07-18 10:39:18.000000000 -0400
+@@ -479,7 +479,7 @@
+ mangle_name("LIBCXX_SUPPORTS_STD_EQ_${LIBCXX_STANDARD_VER}_FLAG" SUPPORTS_DIALECT_NAME)
+ if(NOT ${SUPPORTS_DIALECT_NAME})
+   if(NOT "${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC" AND NOT "${CMAKE_CXX_SIMULATE_ID}" STREQUAL "MSVC")
+-    message(FATAL_ERROR "C++11 or greater is required but the compiler does not support ${LIBCXX_STANDARD_VER}")
++    # message(FATAL_ERROR "C++11 or greater is required but the compiler does not support ${LIBCXX_STANDARD_VER}")
+   endif()
+ endif()
+ 
+diff -ur a/cmake/config-ix.cmake b/cmake/config-ix.cmake
+--- a/cmake/config-ix.cmake	2018-07-18 10:37:38.000000000 -0400
++++ b/cmake/config-ix.cmake	2018-07-18 10:38:59.000000000 -0400
+@@ -59,9 +59,9 @@
+   endif ()
+ endif ()
+ 
+-if(NOT WIN32 OR MINGW)
+-  include(CheckLibcxxAtomic)
+-endif()
++# if(NOT WIN32 OR MINGW)
++#  include(CheckLibcxxAtomic)
++# endif()
+ 
+ # Check compiler flags
+ 
+Only in b/test/std/experimental/filesystem/Inputs/static_test_env: bad_symlink
