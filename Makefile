@@ -78,7 +78,6 @@ build/llvm.BUILT: src/llvm.CLONED
 		install-llvm-ar \
 		install-llvm-ranlib \
 		llvm-config
-	cp -r $(ROOT_DIR)/dist/lib/clang/7.0.0/* $(ROOT_DIR)/dist/lib/clang/8.0.0/
 	touch build/llvm.BUILT
 
 build/musl.BUILT: src/musl.CLONED build/llvm.BUILT
@@ -165,6 +164,7 @@ sysroot/lib/wasmception.wasm: build/llvm.BUILT basics/wasmception.c
 		-o sysroot/lib/wasmception.wasm
 
 build: build/llvm.BUILT build/musl.BUILT build/compiler-rt.BUILT build/libcxxabi.BUILT build/libcxx.BUILT $(BASICS)
+	cp -r $(ROOT_DIR)/dist/lib/clang/7.0.0/* $(ROOT_DIR)/dist/lib/clang/8.0.0/
 
 strip: build/llvm.BUILT
 	cd dist/bin; strip clang-7 llc lld llvm-ar
