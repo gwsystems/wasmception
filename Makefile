@@ -2,10 +2,10 @@
 # http://creativecommons.org/publicdomain/zero/1.0/
 
 ROOT_DIR=${CURDIR}
-LLVM_REV=333081
-CLANG_REV=333081
-LLD_REV=333081
-COMPILER_RT_REV=333082
+LLVM_REV=348222
+CLANG_REV=348223
+LLD_REV=348223
+COMPILER_RT_REV=348223
 LIBCXX_REV=333082
 LIBCXXABI_REV=333082
 
@@ -78,6 +78,7 @@ build/llvm.BUILT: src/llvm.CLONED
 		install-llvm-ar \
 		install-llvm-ranlib \
 		llvm-config
+	cp -r $(ROOT_DIR)/dist/lib/clang/7.0.0/* $(ROOT_DIR)/dist/lib/clang/8.0.0/
 	touch build/llvm.BUILT
 
 build/musl.BUILT: src/musl.CLONED build/llvm.BUILT
