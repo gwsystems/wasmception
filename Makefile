@@ -25,7 +25,7 @@ endif
 ifdef CLANG_SHA
 	cd src/llvm/tools/clang; git checkout $(CLANG_SHA)
 endif
-	cd src/llvm/tools; git clone https://github.com/gwsystems/wasmception-lld.git
+	cd src/llvm/tools; git clone https://github.com/gwsystems/wasmception-lld.git lld
 ifdef LLD_SHA
 	cd src/llvm/tools/lld; git checkout $(LLD_SHA)
 endif
@@ -33,7 +33,7 @@ endif
 
 src/musl.CLONED:
 	mkdir -p src/
-	cd src/; git clone https://github.com/gwsystems/wasmception-musl.git
+	cd src/; git clone https://github.com/gwsystems/wasmception-musl.git musl
 ifdef MUSL_SHA
 	cd src/musl; git checkout $(MUSL_SHA)
 endif
