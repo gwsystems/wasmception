@@ -2,12 +2,13 @@
 # http://creativecommons.org/publicdomain/zero/1.0/
 
 ROOT_DIR=${CURDIR}
-LLVM_REV=348222
-CLANG_REV=348223
-LLD_REV=348223
-COMPILER_RT_REV=348223
-LIBCXX_REV=333082
-LIBCXXABI_REV=333082
+LLVM_SHA=c3039d4e5b58f86fcab717f8024329ef81b0ad39
+CLANG_SHA=b362b05b29b0d5bf897d5f3e9d99eb60c0025d5d
+LLD_SHA=5fb37bb34735f7006f2c22ff10e3e6081a9ce33a
+COMPILER_RT_SHA=250580a9aee433b34c9e187a72b8dda9ac75c4ec
+LIBCXX_SHA=02b189877a38a4fd583d3d4770afa29bd4f4dde1
+LIBCXXABI_SHA=d66bcda1e1d200e707d33eb204d9f89eb0c3eb77
+MUSL_SHA=d9e28df3d85c0bb3b53c8f2e5a16f69dc74162a3
 
 default: build
 
@@ -16,23 +17,23 @@ clean:
 
 src/llvm.CLONED:
 	mkdir -p src/
-	cd src/; svn co http://llvm.org/svn/llvm-project/llvm/trunk llvm
-	cd src/llvm/tools; svn co http://llvm.org/svn/llvm-project/cfe/trunk clang
-	cd src/llvm/tools; svn co http://llvm.org/svn/llvm-project/lld/trunk lld
-ifdef LLVM_REV
-	cd src/llvm; svn up -r$(LLVM_REV)
+	cd src/; git clone https://github.com/gwsystems/wasmception-llvm.git llvm
+ifdef LLVM_SHA
+	cd src/llvm; git checkout $(LLVM_SHA)
 endif
-ifdef CLANG_REV
-	cd src/llvm/tools/clang; svn up -r$(CLANG_REV)
+	cd src/llvm/tools; git clone https://github.com/gwsystems/wasmception-clang.git clang
+ifdef CLANG_SHA
+	cd src/llvm/tools/clang; git checkout $(CLANG_SHA)
 endif
-ifdef LLD_REV
-	cd src/llvm/tools/lld; svn up -r$(LLD_REV)
+	cd src/llvm/tools; git clone https://github.com/gwsystems/wasmception-lld.git
+ifdef LLD_SHA
+	cd src/llvm/tools/lld; git checkout $(LLD_SHA)
 endif
 	touch src/llvm.CLONED
 
 src/musl.CLONED:
 	mkdir -p src/
-	cd src/; git clone https://github.com/Others/musl.git
+	cd src/; git clone https://github.com/gwsystems/wasmception-musl.git
 ifdef MUSL_SHA
 	cd src/musl; git checkout $(MUSL_SHA)
 endif
@@ -40,26 +41,26 @@ endif
 
 src/compiler-rt.CLONED:
 	mkdir -p src/
-	cd src/; svn co http://llvm.org/svn/llvm-project/compiler-rt/trunk compiler-rt
-ifdef COMPILER_RT_REV
-	cd src/compiler-rt; svn up -r$(COMPILER_RT_REV)
+	cd src/; git clone https://github.com/gwsystems/wasmception-compiler-rt.git compiler-rt
+ifdef COMPILER_RT_SHA
+	cd src/compiler-rt; git checkout $(COMPILER_RT_SHA)
 endif
 	touch src/compiler-rt.CLONED
 
 src/libcxx.CLONED:
 	mkdir -p src/
-	cd src/; svn co http://llvm.org/svn/llvm-project/libcxx/trunk libcxx
+	cd src/; git clone https://github.com/gwsystems/wasmception-libcxx.git libcxx
 ifdef LIBCXX_REV
-	cd src/libcxx; svn up -r$(LIBCXX_REV)
+	cd src/libcxx; git checkout $(LIBCXX_SHA)
 endif
 	cd src/libcxx; patch -p 1 < $(ROOT_DIR)/patches/libcxx.patch
 	touch src/libcxx.CLONED
 
 src/libcxxabi.CLONED:
 	mkdir -p src/
-	cd src/; svn co http://llvm.org/svn/llvm-project/libcxxabi/trunk libcxxabi
+	cd src/; git clone https://github.com/gwsystems/wasmception-libcxxabi.git libcxxabi
 ifdef LIBCXXABI_REV
-	cd src/libcxxabi; svn up -r$(LIBCXXABI_REV)
+	cd src/libcxxabi; git checkout $(LIBCXXABI_SHA)
 endif
 	touch src/libcxxabi.CLONED
 
