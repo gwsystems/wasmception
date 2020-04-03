@@ -2,7 +2,7 @@
 # http://creativecommons.org/publicdomain/zero/1.0/
 
 ROOT_DIR=${CURDIR}
-LLVM_SHA=c3039d4e5b58f86fcab717f8024329ef81b0ad39
+LLVM_SHA=eee32a02db4cedf5ddce806dfffaad21fbef17fe
 CLANG_SHA=b362b05b29b0d5bf897d5f3e9d99eb60c0025d5d
 LLD_SHA=5fb37bb34735f7006f2c22ff10e3e6081a9ce33a
 COMPILER_RT_SHA=250580a9aee433b34c9e187a72b8dda9ac75c4ec
