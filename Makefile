@@ -1,6 +1,12 @@
 # Any copyright is dedicated to the Public Domain.
 # http://creativecommons.org/publicdomain/zero/1.0/
 
+# use one less job than number of cores
+NTHDS=$(shell expr $(shell getconf _NPROCESSORS_ONLN) - 1)
+ifeq ($(NTHDS), 0)
+NTHDS=1
+endif
+
 ROOT_DIR=${CURDIR}
 LLVM_SHA=eee32a02db4cedf5ddce806dfffaad21fbef17fe
 CLANG_SHA=b362b05b29b0d5bf897d5f3e9d99eb60c0025d5d
@@ -72,7 +78,7 @@ build/llvm.BUILT: src/llvm.CLONED
 		-DLLVM_TARGETS_TO_BUILD= \
 		-DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD=WebAssembly \
 		$(ROOT_DIR)/src/llvm
-	cd build/llvm; $(MAKE) -j 2 \
+	cd build/llvm; $(MAKE) -j $(NTHDS) \
 		install-clang \
 		install-lld \
 		install-llc \
@@ -102,7 +108,7 @@ build/compiler-rt.BUILT: src/compiler-rt.CLONED build/llvm.BUILT
 		-DCMAKE_INSTALL_PREFIX=$(ROOT_DIR)/dist/lib/clang/7.0.0/ \
 		-DCMAKE_VERBOSE_MAKEFILE:BOOL=ON \
 		$(ROOT_DIR)/src/compiler-rt/lib/builtins
-	cd build/compiler-rt; make -j 2 install
+	cd build/compiler-rt; make -j $(NTHDS) install
 	cp -R $(ROOT_DIR)/build/llvm/lib/clang $(ROOT_DIR)/dist/lib/
 	touch build/compiler-rt.BUILT
 
@@ -125,7 +131,7 @@ build/libcxx.BUILT: build/llvm.BUILT src/libcxx.CLONED build/compiler-rt.BUILT b
 		-DCMAKE_CXX_FLAGS="--target=wasm32-unknown-unknown-wasm -D_LIBCPP_HAS_MUSL_LIBC" \
 		--debug-trycompile \
 		$(ROOT_DIR)/src/libcxx
-	cd build/libcxx; make -j 2 install
+	cd build/libcxx; make -j $(NTHDS) install
 	touch build/libcxx.BUILT
 
 build/libcxxabi.BUILT: src/libcxxabi.CLONED build/libcxx.BUILT build/llvm.BUILT
@@ -149,7 +155,7 @@ build/libcxxabi.BUILT: src/libcxxabi.CLONED build/libcxx.BUILT build/llvm.BUILT
 		-DUNIX:BOOL=ON \
 		--debug-trycompile \
 		$(ROOT_DIR)/src/libcxxabi
-	cd build/libcxxabi; make -j 2 install
+	cd build/libcxxabi; make -j $(NTHDS) install
 	touch build/libcxxabi.BUILT
 
 BASICS=sysroot/include/wasmception.h sysroot/lib/wasmception.wasm
