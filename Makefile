@@ -50,7 +50,7 @@ endif
 src/libcxx.CLONED:
 	mkdir -p src/
 	cd src/; git clone https://github.com/gwsystems/wasmception-libcxx.git libcxx
-ifdef LIBCXX_REV
+ifdef LIBCXX_SHA
 	cd src/libcxx; git checkout $(LIBCXX_SHA)
 endif
 	cd src/libcxx; patch -p 1 < $(ROOT_DIR)/patches/libcxx.patch
@@ -59,7 +59,7 @@ endif
 src/libcxxabi.CLONED:
 	mkdir -p src/
 	cd src/; git clone https://github.com/gwsystems/wasmception-libcxxabi.git libcxxabi
-ifdef LIBCXXABI_REV
+ifdef LIBCXXABI_SHA
 	cd src/libcxxabi; git checkout $(LIBCXXABI_SHA)
 endif
 	touch src/libcxxabi.CLONED
@@ -72,7 +72,7 @@ build/llvm.BUILT: src/llvm.CLONED
 		-DLLVM_TARGETS_TO_BUILD= \
 		-DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD=WebAssembly \
 		$(ROOT_DIR)/src/llvm
-	cd build/llvm; $(MAKE) -j 8 \
+	cd build/llvm; $(MAKE) -j 2 \
 		install-clang \
 		install-lld \
 		install-llc \
@@ -102,7 +102,7 @@ build/compiler-rt.BUILT: src/compiler-rt.CLONED build/llvm.BUILT
 		-DCMAKE_INSTALL_PREFIX=$(ROOT_DIR)/dist/lib/clang/7.0.0/ \
 		-DCMAKE_VERBOSE_MAKEFILE:BOOL=ON \
 		$(ROOT_DIR)/src/compiler-rt/lib/builtins
-	cd build/compiler-rt; make -j 8 install
+	cd build/compiler-rt; make -j 2 install
 	cp -R $(ROOT_DIR)/build/llvm/lib/clang $(ROOT_DIR)/dist/lib/
 	touch build/compiler-rt.BUILT
 
@@ -125,7 +125,7 @@ build/libcxx.BUILT: build/llvm.BUILT src/libcxx.CLONED build/compiler-rt.BUILT b
 		-DCMAKE_CXX_FLAGS="--target=wasm32-unknown-unknown-wasm -D_LIBCPP_HAS_MUSL_LIBC" \
 		--debug-trycompile \
 		$(ROOT_DIR)/src/libcxx
-	cd build/libcxx; make -j 8 install
+	cd build/libcxx; make -j 2 install
 	touch build/libcxx.BUILT
 
 build/libcxxabi.BUILT: src/libcxxabi.CLONED build/libcxx.BUILT build/llvm.BUILT
@@ -149,7 +149,7 @@ build/libcxxabi.BUILT: src/libcxxabi.CLONED build/libcxx.BUILT build/llvm.BUILT
 		-DUNIX:BOOL=ON \
 		--debug-trycompile \
 		$(ROOT_DIR)/src/libcxxabi
-	cd build/libcxxabi; make -j 8 install
+	cd build/libcxxabi; make -j 2 install
 	touch build/libcxxabi.BUILT
 
 BASICS=sysroot/include/wasmception.h sysroot/lib/wasmception.wasm
